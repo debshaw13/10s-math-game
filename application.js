@@ -9,4 +9,27 @@ var pickRandomNumber = function() {
   $('.question-field').append($('<p>' + firstNumber + '&nbsp;' + '+' + '&nbsp;' + secondNumber + ' = ' + '</p>'));
 }
 
-var count
+var timer = null;
+var countDown;
+var startTime;
+
+var startTimer = function(timeLimit) {
+  if (timer === null) {
+    $("#timer").text(timeLimit);
+    startTime = Date.now();
+    timer = setInterval(function() {
+      if (timeLimit > 0) {
+        countDown = timeLimit - Math.floor((Date.now() - startTime)/1000);
+        timeLimit--;
+        $("#timer").text(timeLimit);
+      } else {
+        stopTimer();
+      }
+    }, 1000); // Executed every 1000 millisecond
+  }
+};
+
+var stopTimer = function() {
+  clearInterval(timer);
+  timer = null;
+};
