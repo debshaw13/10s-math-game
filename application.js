@@ -20,9 +20,9 @@ $(document).ready(function() {
   //Show timeLimit in html
   $('span#timer').text(timeLimit);
 
-  //Show score in html
+  //Show score and high score in html
   $('span#score').text(score);
-
+  $('span#highscore').text(highscore);
 });
 
 //Global variables
@@ -31,6 +31,7 @@ var timer = null;
 var timeLimit = 10;
 var rightAnswer;
 var score = 0;
+var highscore = 0;
 
 //Random number generator function
 var pickRandomNumber = function() {
@@ -55,13 +56,17 @@ var startTimer = function(timeLimit) {
         $("#timer").text(timeLimit);
       } else {
         stopTimer();
+        var timer = null // Reset timer variable
+        timeLimit = 10; //Reset time to 10 seconds
+        $("#timer").text(timeLimit); //Update html
+        if (score > highscore) { //Update high score variable
+          highscore = score;
+          $('span#highscore').text(highscore)
+        }
+        
         var gameComplete = confirm("You scored " + score + " points. Play again?");
         if (gameComplete === true) {
           score = 0; //Reset score
-
-          timeLimit = 10; //Reset time to 10 seconds
-          $("#timer").text(timeLimit);
-
           $('.question-field').empty(); //Empty question field
           pickRandomNumber(); // Show new question
         }
@@ -88,11 +93,11 @@ var checkAnswer = function() {
     stopTimer();
     startTimer(timeLimit);
 
-    //Update and show score
+    //Update score and high score
     score++;
     $('span#score').text(score);
 
-    //Show new question
+    //Create new question
     pickRandomNumber();
   }
   else {
