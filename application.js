@@ -1,6 +1,6 @@
 $(document).ready(function() {
   //Run random number generator
-  pickRandomNumber();
+  additionQuestion();
 
   //Initiate 10 second countdown function on first input field keyup
   $("#answer-field").keyup(function() {
@@ -33,13 +33,15 @@ var rightAnswer;
 var score = 0;
 var highscore = 0;
 
-//Random number generator function
-var pickRandomNumber = function() {
+//Addition question function
+var additionQuestion = function() {
   var firstNumber = Math.floor((Math.random() * 10) + 1);
   var secondNumber = Math.floor((Math.random() * 10) + 1);
   rightAnswer = firstNumber + secondNumber;
   $('.question-field').append($('<p>' + firstNumber + '&nbsp;' + '+' + '&nbsp;' + secondNumber + ' = ' + '</p>'));;
 }
+
+//Subtraction question function
 
 //Start timer and stop timer functions
 var startTimer = function(timeLimit) {
@@ -63,12 +65,15 @@ var startTimer = function(timeLimit) {
           highscore = score;
           $('span#highscore').text(highscore)
         }
-        
+
         var gameComplete = confirm("You scored " + score + " points. Play again?");
         if (gameComplete === true) {
           score = 0; //Reset score
           $('.question-field').empty(); //Empty question field
-          pickRandomNumber(); // Show new question
+          additionQuestion(); // Show new question
+          gameLaunched = false;
+        } else {
+          score = 0;
         }
       }
     }, 1000); // Executed every 1000 millisecond
@@ -98,7 +103,7 @@ var checkAnswer = function() {
     $('span#score').text(score);
 
     //Create new question
-    pickRandomNumber();
+    additionQuestion();
   }
   else {
     $('#answer-field').val('');
