@@ -2,22 +2,37 @@ $(document).ready(function() {
   //Run random number generator
   pickRandomNumber();
 
-  //Initiate 10 second countdown function on input field keydown
-  $("#answer-field").keydown(function() {
-    startTimer(10);
+  //Initiate 10 second countdown function on first input field keyup
+  $("#answer-field").keyup(function() {
+    if (gameLaunched === false) {
+      startTimer(timeLimit);
+    }
+    gameLaunched = true;
   })
 
-  //Check provided answer
+  //Check provided answer on input field keyup
   $("#answer-field").keyup(function() {
     if ($("#answer-field").val().length === rightAnswer.toString().length) {
       checkAnswer();
     }
   })
+
+  //Show timeLimit in html
+  $('span#timer').text(timeLimit);
+
+  //Show score in html
+  $('span#score').text(score);
+
 });
 
-//Random number generator function
+//Global variables
+var gameLaunched = false;
+var timer = null;
+var timeLimit = 10;
 var rightAnswer;
+var score = 0;
 
+//Random number generator function
 var pickRandomNumber = function() {
   var firstNumber = Math.floor((Math.random() * 10) + 1);
   var secondNumber = Math.floor((Math.random() * 10) + 1);
@@ -25,10 +40,7 @@ var pickRandomNumber = function() {
   $('.question-field').append($('<p>' + firstNumber + '&nbsp;' + '+' + '&nbsp;' + secondNumber + ' = ' + '</p>'));;
 }
 
-//Countdown function
-var timer = null;
-var timeLimit;
-
+//Start timer and stop timer functions
 var startTimer = function(timeLimit) {
   var countDown;
   var startTime;
@@ -43,6 +55,16 @@ var startTimer = function(timeLimit) {
         $("#timer").text(timeLimit);
       } else {
         stopTimer();
+        var gameComplete = confirm("You scored " + score + " points. Play again?");
+        if (gameComplete === true) {
+          score = 0; //Reset score
+
+          timeLimit = 10; //Reset time to 10 seconds
+          $("#timer").text(timeLimit);
+
+          $('.question-field').empty(); //Empty question field
+          pickRandomNumber(); // Show new question
+        }
       }
     }, 1000); // Executed every 1000 millisecond
   }
@@ -55,16 +77,25 @@ var stopTimer = function() {
 
 //Read input field and determine right answer
 var checkAnswer = function() {
-  if ($("#answer-field").val().toString() === rightAnswer.toString()) {
-    console.log("hooray!");
-    timeLimit++;
+  if ($("#answer-field").val() == rightAnswer) {
+    //delete question and empty input row
     $('.question-field').empty();
     $('#answer-field').val('');
+
+    //Read remaining time from HTML and update
+    timeLimit = parseInt($('#timer').text())
+    timeLimit++;
+    stopTimer();
+    startTimer(timeLimit);
+
+    //Update and show score
+    score++;
+    $('span#score').text(score);
+
+    //Show new question
     pickRandomNumber();
   }
   else {
-    console.log($("#answer-field").val());
-    console.log(rightAnswer);
-    console.log("oops");
+    $('#answer-field').val('');
   }
 }
